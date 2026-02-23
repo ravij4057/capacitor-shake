@@ -13,15 +13,13 @@ extension Notification.Name {
     static let deviceDidShake = Notification.Name("deviceDidShake")
 }
 
-@objc(MyShake)
+@objc(MyShakePlugin)
 public class MyShakePlugin: CAPPlugin {
-    
     override public func load() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.onShakeDetected), name: .deviceDidShake, object: nil)
     }
 
     @objc private func onShakeDetected() {
-        print("DEBUG: Native iOS Shake Captured")
         DispatchQueue.main.async {
             self.notifyListeners("shake", data: [:])
         }
