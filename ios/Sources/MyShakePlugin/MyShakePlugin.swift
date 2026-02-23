@@ -1,23 +1,29 @@
 import Foundation
 import Capacitor
 
-/**
- * Please read the Capacitor iOS Plugin Development Guide
- * here: https://capacitorjs.com/docs/plugins/ios
- */
-@objc(MyShakePlugin)
-public class MyShakePlugin: CAPPlugin, CAPBridgedPlugin {
-    public let identifier = "MyShakePlugin"
-    public let jsName = "MyShake"
-    public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "echo", returnType: CAPPluginReturnPromise)
-    ]
-    private let implementation = MyShake()
+extension UIWindow {
+    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake {
+            NotificationCenter.default.post(name: .deviceDidShake, object: nil)
+        }
+    }
+}
 
-    @objc func echo(_ call: CAPPluginCall) {
-        let value = call.getString("value") ?? ""
-        call.resolve([
-            "value": implementation.echo(value)
-        ])
+extension Notification.Name {
+    static let deviceDidShake = Notification.Name("MyShakeDetected")
+}
+
+@objc(MyShakePlugin)
+public class MyShakePlugin: CAPPlugin {
+    override public func load() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.onShakeDetected), name: .deviceDidShake, object: nil)
+    }
+
+    @objc private func onShakeDetected() {
+        notifyListeners("shake", data: [:])
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
