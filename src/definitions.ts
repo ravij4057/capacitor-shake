@@ -1,13 +1,9 @@
-import type { PluginListenerHandle } from '@capacitor/core';
+import type { PluginListenerHandle, ListenerCallback } from '@capacitor/core';
 
 export interface MyShakePlugin {
-  /**
-   * Listen for shake events.
-   */
   addListener(
     eventName: 'shake',
-    listenerFunc: (data: any) => void, // Add data: any here
+    listenerFunc: ListenerCallback,
   ): Promise<PluginListenerHandle>;
-  
   removeAllListeners(): Promise<void>;
 }

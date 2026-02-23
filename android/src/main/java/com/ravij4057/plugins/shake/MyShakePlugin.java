@@ -12,16 +12,13 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "MyShake")
 public class MyShakePlugin extends Plugin implements SensorEventListener {
     private SensorManager sensorManager;
-    private float mAccel;
-    private float mAccelCurrent;
-    private float mAccelLast;
+    private float mAccel = 10f;
+    private float mAccelCurrent = SensorManager.GRAVITY_EARTH;
+    private float mAccelLast = SensorManager.GRAVITY_EARTH;
 
     @Override
     public void load() {
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-        mAccel = 10f;
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
     }
 
     @Override
@@ -36,11 +33,9 @@ public class MyShakePlugin extends Plugin implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
+        float x = event.values[0]; float y = event.values[1]; float z = event.values[2];
         mAccelLast = mAccelCurrent;
-        mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
+        mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
         float delta = mAccelCurrent - mAccelLast;
         mAccel = mAccel * 0.9f + delta;
         if (mAccel > 12) {
@@ -48,6 +43,5 @@ public class MyShakePlugin extends Plugin implements SensorEventListener {
         }
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 }

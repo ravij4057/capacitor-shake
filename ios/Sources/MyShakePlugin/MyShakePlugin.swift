@@ -1,7 +1,6 @@
 import Foundation
 import Capacitor
 
-// Exact Cap-go logic: Extend UIWindow to catch motionEnded
 extension UIWindow {
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
@@ -14,7 +13,7 @@ extension Notification.Name {
     static let deviceDidShake = Notification.Name("deviceDidShake")
 }
 
-@objc(MyShakePlugin)
+@objc(MyShake)
 public class MyShakePlugin: CAPPlugin {
     
     override public func load() {
@@ -22,8 +21,10 @@ public class MyShakePlugin: CAPPlugin {
     }
 
     @objc private func onShakeDetected() {
-        // Notification aate hi JS ko notify karo
-        self.notifyListeners("shake", data: [:])
+        print("DEBUG: Native iOS Shake Captured")
+        DispatchQueue.main.async {
+            self.notifyListeners("shake", data: [:])
+        }
     }
 
     deinit {

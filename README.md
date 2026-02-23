@@ -16,6 +16,7 @@ npx cap sync
 * [`addListener('shake', ...)`](#addlistenershake-)
 * [`removeAllListeners()`](#removealllisteners)
 * [Interfaces](#interfaces)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -25,15 +26,13 @@ npx cap sync
 ### addListener('shake', ...)
 
 ```typescript
-addListener(eventName: 'shake', listenerFunc: (data: any) => void) => Promise<PluginListenerHandle>
+addListener(eventName: 'shake', listenerFunc: ListenerCallback) => Promise<PluginListenerHandle>
 ```
 
-Listen for shake events.
-
-| Param              | Type                                |
-| ------------------ | ----------------------------------- |
-| **`eventName`**    | <code>'shake'</code>                |
-| **`listenerFunc`** | <code>(data: any) =&gt; void</code> |
+| Param              | Type                                                          |
+| ------------------ | ------------------------------------------------------------- |
+| **`eventName`**    | <code>'shake'</code>                                          |
+| **`listenerFunc`** | <code><a href="#listenercallback">ListenerCallback</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt;</code>
 
@@ -57,5 +56,13 @@ removeAllListeners() => Promise<void>
 | Prop         | Type                                      |
 | ------------ | ----------------------------------------- |
 | **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
+
+
+### Type Aliases
+
+
+#### ListenerCallback
+
+<code>(err: any, ...args: any[]): void</code>
 
 </docgen-api>
