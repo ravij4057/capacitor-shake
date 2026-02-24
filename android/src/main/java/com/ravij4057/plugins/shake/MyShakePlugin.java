@@ -15,20 +15,14 @@ public class MyShakePlugin extends Plugin implements SensorEventListener {
     private float mAccel = 10f;
     private float mAccelCurrent = SensorManager.GRAVITY_EARTH;
     private float mAccelLast = SensorManager.GRAVITY_EARTH;
+    
+    // Cooldown variables
+    private long lastShakeTimestamp = 0;
+    private static final int COOLDOWN_MS = 2000; // 2 seconds
 
     @Override
     public void load() {
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-    }
-
-    @Override
-    protected void handleOnResume() {
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
-    }
-
-    @Override
-    protected void handleOnPause() {
-        sensorManager.unregisterListener(this);
     }
 
     @Override
@@ -40,11 +34,15 @@ public class MyShakePlugin extends Plugin implements SensorEventListener {
         mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
         float delta = mAccelCurrent - mAccelLast;
         mAccel = mAccel * 0.9f + delta;
+
         if (mAccel > 12) {
-            notifyListeners("shake", new JSObject());
+            long now = System.currentTimeMillis();
+            // Sirf tab notify karein jab 2 second beet chuke hon
+            if (now - lastShakeTimestamp > COOLDOWN_MS) {
+                lastShakeTimestamp = now;
+                notifyListeners("shake", new JSObject());
+            }
         }
     }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    // ... baki accuracy method same
 }

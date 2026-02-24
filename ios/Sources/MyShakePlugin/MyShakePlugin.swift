@@ -6,7 +6,11 @@ import CoreMotion
 public class MyShakePlugin: CAPPlugin {
     private let motionManager = CMMotionManager()
     private let queue = OperationQueue()
-    private let shakeThreshold = 2.5 // Sensitivity
+    private let shakeThreshold = 2.5
+    
+    // Timer add kiya taaki baar-baar trigger na ho
+    private var lastShakeTime: TimeInterval = 0
+    private let cooldownLimit: TimeInterval = 2.0 // 2 seconds cooldown
 
     override public func load() {
         startMonitoring()
@@ -20,21 +24,22 @@ public class MyShakePlugin: CAPPlugin {
                 let totalAcceleration = sqrt(pow(acceleration.x, 2) + pow(acceleration.y, 2) + pow(acceleration.z, 2))
 
                 if totalAcceleration > self?.shakeThreshold ?? 2.5 {
-                    print("DEBUG: Native Shake Detected - Notifying JS")
-                    self?.notifyJS()
+                    let now = Date().timeIntervalSince1970
+                    
+                    // Check karein ki pichla shake 2 second pehle hua tha ya nahi
+                    if now - (self?.lastShakeTime ?? 0) > (self?.cooldownLimit ?? 2.0) {
+                        self?.lastShakeTime = now
+                        print("DEBUG: Shake Captured (Throttled)")
+                        self?.notifyJS()
+                    }
                 }
             }
         }
     }
 
     private func notifyJS() {
-        // Hamesha Main Thread se JS ko bhejien
         DispatchQueue.main.async {
             self.notifyListeners("shake", data: [:])
         }
-    }
-
-    deinit {
-        motionManager.stopAccelerometerUpdates()
     }
 }
