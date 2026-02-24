@@ -11,8 +11,8 @@ export class MyShakeWeb extends WebPlugin implements MyShakePlugin {
       window.addEventListener('devicemotion', (event) => {
         const acc = event.accelerationIncludingGravity;
         if (acc) {
-          const sensitivity = 15;
-          if (Math.abs(acc.x || 0) > sensitivity || Math.abs(acc.y || 0) > sensitivity || Math.abs(acc.z || 0) > sensitivity) {
+          const threshold = 15;
+          if (Math.abs(acc.x || 0) > threshold || Math.abs(acc.y || 0) > threshold || Math.abs(acc.z || 0) > threshold) {
             this.notifyListeners('shake', {});
           }
         }
